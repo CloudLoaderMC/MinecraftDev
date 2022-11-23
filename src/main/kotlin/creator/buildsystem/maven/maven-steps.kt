@@ -3,7 +3,7 @@
  *
  * https://minecraftdev.org
  *
- * Copyright (c) 2021 minecraft-dev
+ * Copyright (c) 2022 minecraft-dev
  *
  * MIT License
  */
@@ -40,6 +40,7 @@ import java.nio.file.Path
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import java.nio.file.StandardOpenOption.WRITE
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters
@@ -103,7 +104,9 @@ class BasicMavenStep(
 
     companion object {
         val pluginVersions by lazy {
-            getVersionJson<Map<String, String>>("maven.json")
+            runBlocking {
+                getVersionJson<Map<String, String>>("maven.json")
+            }
         }
 
         private val defaultParts = listOf(setupDirs(), setupCore(), setupName(), setupInfo(), setupDependencies())

@@ -3,7 +3,7 @@
  *
  * https://minecraftdev.org
  *
- * Copyright (c) 2021 minecraft-dev
+ * Copyright (c) 2022 minecraft-dev
  *
  * MIT License
  */
@@ -14,16 +14,17 @@ import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
 
 plugins {
-    kotlin("jvm") version "1.6.20"
+    kotlin("jvm") version "1.7.20"
     java
     mcdev
     groovy
     idea
-    id("org.jetbrains.intellij") version "1.5.2"
+    id("org.jetbrains.intellij") version "1.9.0"
     id("org.cadixdev.licenser")
-    id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 }
 
 val ideaVersionName: String by project
@@ -41,6 +42,11 @@ version = "$ideaVersionName-$coreVersion"
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+kotlin {
+    jvmToolchain {
+        languageVersion.set(java.toolchain.languageVersion.get())
     }
 }
 
@@ -79,6 +85,8 @@ dependencies {
     implementation(libs.mappingIo)
     implementation(libs.bundles.asm)
 
+    implementation(libs.bundles.fuel)
+
     jflex(libs.jflex.lib)
     jflexSkeleton(libs.jflex.skeleton) {
         artifact {
@@ -109,6 +117,33 @@ dependencies {
 
     testImplementation(libs.junit.api)
     testRuntimeOnly(libs.junit.entine)
+}
+
+val artifactType = Attribute.of("artifactType", String::class.java)
+val filtered = Attribute.of("filtered", Boolean::class.javaObjectType)
+
+dependencies {
+    attributesSchema {
+        attribute(filtered)
+    }
+    artifactTypes.getByName("jar") {
+        attributes.attribute(filtered, false)
+    }
+
+    registerTransform(Filter::class) {
+        from.attribute(filtered, false).attribute(artifactType, "jar")
+        to.attribute(filtered, true).attribute(artifactType, "jar")
+
+        parameters {
+            ideaVersion.set(providers.gradleProperty("ideaVersion"))
+            ideaVersionName.set(providers.gradleProperty("ideaVersionName"))
+            depsFile.set(layout.projectDirectory.file(".gradle/intellij-deps.json"))
+        }
+    }
+}
+
+configurations.compileClasspath {
+    attributes.attribute(filtered, true)
 }
 
 intellij {
@@ -165,7 +200,8 @@ tasks.withType<JavaCompile>().configureEach {
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
-        freeCompilerArgs = listOf("-Xjvm-default=all")
+        freeCompilerArgs = listOf("-Xuse-k2", "-Xjvm-default=all", "-Xjdk-release=11")
+        kotlinDaemonJvmArguments.add("-Xmx2G")
     }
 }
 
@@ -239,6 +275,8 @@ idea {
     module {
         generatedSourceDirs.add(file("build/gen"))
         excludeDirs.add(file(intellij.sandboxDir.get()))
+        isDownloadJavadoc = true
+        isDownloadSources = true
     }
 }
 
@@ -275,8 +313,8 @@ license {
     }
 }
 
-ktlint {
-    enableExperimentalRules.set(true)
+tasks.withType<BaseKtLintCheckTask>().configureEach {
+    workerMaxHeapSize.set("512m")
 }
 
 tasks.register("format") {
@@ -330,7 +368,7 @@ tasks.register("cleanSandbox", Delete::class) {
 }
 
 tasks.runIde {
-    maxHeapSize = "2G"
+    maxHeapSize = "4G"
 
     jvmArgs("--add-exports=java.base/jdk.internal.vm=ALL-UNNAMED")
     System.getProperty("debug")?.let {
