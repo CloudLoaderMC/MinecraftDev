@@ -8,55 +8,47 @@
  * MIT License
  */
 
-package com.demonwav.mcdev.facet
+package com.demonwav.mcdev.platform.cloud.creator
 
 import com.demonwav.mcdev.asset.PlatformAssets
+import com.demonwav.mcdev.facet.MinecraftFacetConfiguration
 import com.demonwav.mcdev.platform.PlatformType
 import com.intellij.facet.ui.FacetEditorTab
+import com.intellij.ui.components.JBRadioButton
 import com.intellij.util.ui.UIUtil
 import javax.swing.JCheckBox
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class MinecraftFacetEditorTab(private val configuration: MinecraftFacetConfiguration) : FacetEditorTab() {
+class HybridLoaderSelectorWizardStep(private val configuration: MinecraftFacetConfiguration) : FacetEditorTab() {
 
     private lateinit var panel: JPanel
 
     private lateinit var bukkitEnabledCheckBox: JCheckBox
-    private lateinit var bukkitAutoCheckBox: JCheckBox
+    private lateinit var bukkitMainButton: JBRadioButton
     private lateinit var spigotEnabledCheckBox: JCheckBox
-    private lateinit var spigotAutoCheckBox: JCheckBox
+    private lateinit var spigotMainButton: JBRadioButton
     private lateinit var paperEnabledCheckBox: JCheckBox
-    private lateinit var paperAutoCheckBox: JCheckBox
+    private lateinit var paperMainButton: JBRadioButton
     private lateinit var spongeEnabledCheckBox: JCheckBox
-    private lateinit var spongeAutoCheckBox: JCheckBox
+    private lateinit var spongeMainButton: JBRadioButton
     private lateinit var forgeEnabledCheckBox: JCheckBox
-    private lateinit var forgeAutoCheckBox: JCheckBox
+    private lateinit var forgeMainButton: JBRadioButton
     private lateinit var fabricEnabledCheckBox: JCheckBox
-    private lateinit var fabricAutoCheckBox: JCheckBox
-    private lateinit var cloudEnabledCheckBox: JCheckBox
-    private lateinit var cloudAutoCheckBox: JCheckBox
+    private lateinit var fabricMainButton: JBRadioButton
     private lateinit var architecturyEnabledCheckBox: JCheckBox
-    private lateinit var architecturyAutoCheckBox: JCheckBox
+    private lateinit var architecturyMainButton: JBRadioButton
     private lateinit var liteloaderEnabledCheckBox: JCheckBox
-    private lateinit var liteloaderAutoCheckBox: JCheckBox
-    private lateinit var mcpEnabledCheckBox: JCheckBox
-    private lateinit var mcpAutoCheckBox: JCheckBox
-    private lateinit var mixinEnabledCheckBox: JCheckBox
-    private lateinit var mixinAutoCheckBox: JCheckBox
+    private lateinit var liteloaderMainButton: JBRadioButton
     private lateinit var bungeecordEnabledCheckBox: JCheckBox
-    private lateinit var bungeecordAutoCheckBox: JCheckBox
+    private lateinit var bungeecordMainButton: JBRadioButton
     private lateinit var waterfallEnabledCheckBox: JCheckBox
-    private lateinit var waterfallAutoCheckBox: JCheckBox
+    private lateinit var waterfallMainButton: JBRadioButton
     private lateinit var velocityEnabledCheckBox: JCheckBox
-    private lateinit var velocityAutoCheckBox: JCheckBox
-    private lateinit var adventureEnabledCheckBox: JCheckBox
-    private lateinit var adventureAutoCheckBox: JCheckBox
+    private lateinit var velocityMainButton: JBRadioButton
 
     private lateinit var spongeIcon: JLabel
-    private lateinit var mcpIcon: JLabel
-    private lateinit var mixinIcon: JLabel
 
     private val enableCheckBoxArray: Array<JCheckBox> by lazy {
         arrayOf(
@@ -66,43 +58,33 @@ class MinecraftFacetEditorTab(private val configuration: MinecraftFacetConfigura
             spongeEnabledCheckBox,
             forgeEnabledCheckBox,
             fabricEnabledCheckBox,
-            cloudEnabledCheckBox,
             architecturyEnabledCheckBox,
             liteloaderEnabledCheckBox,
-            mcpEnabledCheckBox,
-            mixinEnabledCheckBox,
             bungeecordEnabledCheckBox,
             waterfallEnabledCheckBox,
-            velocityEnabledCheckBox,
-            adventureEnabledCheckBox
+            velocityEnabledCheckBox
         )
     }
 
-    private val autoCheckBoxArray: Array<JCheckBox> by lazy {
+    private val mainButtonArray: Array<JBRadioButton> by lazy {
         arrayOf(
-            bukkitAutoCheckBox,
-            spigotAutoCheckBox,
-            paperAutoCheckBox,
-            spongeAutoCheckBox,
-            forgeAutoCheckBox,
-            fabricAutoCheckBox,
-            cloudAutoCheckBox,
-            architecturyAutoCheckBox,
-            liteloaderAutoCheckBox,
-            mcpAutoCheckBox,
-            mixinAutoCheckBox,
-            bungeecordAutoCheckBox,
-            waterfallAutoCheckBox,
-            velocityAutoCheckBox,
-            adventureAutoCheckBox
+            bukkitMainButton,
+            spigotMainButton,
+            paperMainButton,
+            spongeMainButton,
+            forgeMainButton,
+            fabricMainButton,
+            architecturyMainButton,
+            liteloaderMainButton,
+            bungeecordMainButton,
+            waterfallMainButton,
+            velocityMainButton
         )
     }
 
     override fun createComponent(): JComponent {
         if (UIUtil.isUnderDarcula()) {
             spongeIcon.icon = PlatformAssets.SPONGE_ICON_2X_DARK
-            mcpIcon.icon = PlatformAssets.MCP_ICON_2X_DARK
-            mixinIcon.icon = PlatformAssets.MIXIN_ICON_2X_DARK
         }
 
         runOnAll { enabled, auto, platformType, _, _ ->
@@ -131,80 +113,37 @@ class MinecraftFacetEditorTab(private val configuration: MinecraftFacetConfigura
             )
         }
 
-        bukkitAutoCheckBox.addActionListener {
-            all(bukkitAutoCheckBox, spigotAutoCheckBox, paperAutoCheckBox)(
-                SPIGOT,
-                PAPER
-            )
+        bukkitMainButton.addActionListener {
         }
-        spigotAutoCheckBox.addActionListener {
-            all(spigotAutoCheckBox, bukkitAutoCheckBox, paperAutoCheckBox)(
-                BUKKIT,
-                PAPER
-            )
+        spigotMainButton.addActionListener {
         }
-        paperAutoCheckBox.addActionListener {
-            all(paperAutoCheckBox, bukkitAutoCheckBox, spigotAutoCheckBox)(
-                BUKKIT,
-                SPIGOT
-            )
+        paperMainButton.addActionListener {
         }
 
         forgeEnabledCheckBox.addActionListener {
-            also(forgeEnabledCheckBox, mcpEnabledCheckBox)
-            unique(forgeEnabledCheckBox, architecturyEnabledCheckBox, cloudEnabledCheckBox)
+            unique(forgeEnabledCheckBox, architecturyEnabledCheckBox)
         }
         fabricEnabledCheckBox.addActionListener {
-            also(fabricEnabledCheckBox, mixinEnabledCheckBox, mcpEnabledCheckBox)
-            unique(fabricEnabledCheckBox, architecturyEnabledCheckBox, cloudEnabledCheckBox)
-        }
-        cloudEnabledCheckBox.addActionListener {
-            also(cloudEnabledCheckBox, mixinEnabledCheckBox, mcpEnabledCheckBox)
-            unique(cloudEnabledCheckBox, architecturyEnabledCheckBox, forgeEnabledCheckBox, fabricEnabledCheckBox)
+            unique(fabricEnabledCheckBox, architecturyEnabledCheckBox)
         }
         architecturyEnabledCheckBox.addActionListener {
             unique(
                 architecturyEnabledCheckBox,
                 fabricEnabledCheckBox,
-                forgeEnabledCheckBox,
-                cloudEnabledCheckBox
+                forgeEnabledCheckBox
             )
         }
 
-        forgeAutoCheckBox.addActionListener {
-            all(forgeAutoCheckBox, fabricAutoCheckBox, architecturyAutoCheckBox)(
-                FABRIC,
-                ARCHITECTURY,
-                CLOUD
-            )
+        forgeMainButton.addActionListener {
         }
 
-        fabricAutoCheckBox.addActionListener {
-            all(fabricAutoCheckBox, forgeAutoCheckBox, architecturyAutoCheckBox)(
-                FORGE,
-                ARCHITECTURY,
-                CLOUD
-            )
+        fabricMainButton.addActionListener {
         }
 
-        cloudAutoCheckBox.addActionListener {
-            all(cloudAutoCheckBox, forgeAutoCheckBox, fabricAutoCheckBox, architecturyAutoCheckBox)(
-                FORGE,
-                FABRIC,
-                ARCHITECTURY
-            )
+        architecturyMainButton.addActionListener {
         }
 
-        architecturyAutoCheckBox.addActionListener {
-            all(architecturyAutoCheckBox, forgeAutoCheckBox, fabricAutoCheckBox, cloudAutoCheckBox)(
-                FORGE,
-                FABRIC,
-                CLOUD
-            )
-        }
-
-        liteloaderEnabledCheckBox.addActionListener { also(liteloaderEnabledCheckBox, mcpEnabledCheckBox) }
-        mixinEnabledCheckBox.addActionListener { also(mixinEnabledCheckBox, mcpEnabledCheckBox) }
+        liteloaderEnabledCheckBox.addActionListener { }
 
         bungeecordEnabledCheckBox.addActionListener { unique(bungeecordEnabledCheckBox, waterfallEnabledCheckBox) }
         waterfallEnabledCheckBox.addActionListener { unique(waterfallEnabledCheckBox, bungeecordEnabledCheckBox) }
@@ -246,13 +185,13 @@ class MinecraftFacetEditorTab(private val configuration: MinecraftFacetConfigura
     }
 
     private inline fun runOnAll(
-        run: (JCheckBox, JCheckBox, PlatformType, MutableMap<PlatformType, Boolean>, Set<PlatformType>) -> Unit
+        run: (JCheckBox, JBRadioButton, PlatformType, MutableMap<PlatformType, Boolean>, Set<PlatformType>) -> Unit
     ) {
         val state = configuration.state
         for (i in indexes) {
             run(
                 enableCheckBoxArray[i],
-                autoCheckBoxArray[i],
+                mainButtonArray[i],
                 platformTypes[i],
                 state.userChosenTypes,
                 state.autoDetectTypes
@@ -296,14 +235,14 @@ class MinecraftFacetEditorTab(private val configuration: MinecraftFacetConfigura
         return object : Invoker() {
             override fun invoke(vararg indexes: Int) {
                 for (i in indexes) {
-                    checkAuto(autoCheckBoxArray[i], enableCheckBoxArray[i], platformTypes[i])
+                    checkAuto(mainButtonArray[i], enableCheckBoxArray[i], platformTypes[i])
                 }
             }
         }
     }
 
-    private fun checkAuto(auto: JCheckBox, enabled: JCheckBox, type: PlatformType) {
-        if (auto.isSelected) {
+    private fun checkAuto(main: JBRadioButton, enabled: JCheckBox, type: PlatformType) {
+        if (main.isSelected) {
             enabled.isEnabled = false
             enabled.isSelected = type in configuration.state.autoDetectTypes
         } else {
@@ -325,15 +264,11 @@ class MinecraftFacetEditorTab(private val configuration: MinecraftFacetConfigura
         private const val SPONGE = PAPER + 1
         private const val FORGE = SPONGE + 1
         private const val FABRIC = FORGE + 1
-        private const val CLOUD = FABRIC + 1
-        private const val ARCHITECTURY = CLOUD + 1
+        private const val ARCHITECTURY = FABRIC + 1
         private const val LITELOADER = ARCHITECTURY + 1
-        private const val MCP = LITELOADER + 1
-        private const val MIXIN = MCP + 1
-        private const val BUNGEECORD = MIXIN + 1
+        private const val BUNGEECORD = LITELOADER + 1
         private const val WATERFALL = BUNGEECORD + 1
         private const val VELOCITY = WATERFALL + 1
-        private const val ADVENTURE = VELOCITY + 1
 
         private val platformTypes = arrayOf(
             PlatformType.BUKKIT,
@@ -342,15 +277,11 @@ class MinecraftFacetEditorTab(private val configuration: MinecraftFacetConfigura
             PlatformType.SPONGE,
             PlatformType.FORGE,
             PlatformType.FABRIC,
-            PlatformType.CLOUD,
             PlatformType.ARCHITECTURY,
             PlatformType.LITELOADER,
-            PlatformType.MCP,
-            PlatformType.MIXIN,
             PlatformType.BUNGEECORD,
             PlatformType.WATERFALL,
-            PlatformType.VELOCITY,
-            PlatformType.ADVENTURE
+            PlatformType.VELOCITY
         )
 
         private val indexes = intArrayOf(
@@ -360,15 +291,11 @@ class MinecraftFacetEditorTab(private val configuration: MinecraftFacetConfigura
             SPONGE,
             FORGE,
             FABRIC,
-            CLOUD,
             ARCHITECTURY,
             LITELOADER,
-            MCP,
-            MIXIN,
             BUNGEECORD,
             WATERFALL,
-            VELOCITY,
-            ADVENTURE
+            VELOCITY
         )
     }
 }

@@ -15,6 +15,7 @@ import com.demonwav.mcdev.platform.PlatformType
 import com.demonwav.mcdev.platform.architectury.creator.ArchitecturyProjectConfig
 import com.demonwav.mcdev.platform.bukkit.creator.BukkitProjectConfig
 import com.demonwav.mcdev.platform.bungeecord.creator.BungeeCordProjectConfig
+import com.demonwav.mcdev.platform.cloud.creator.CloudProjectConfig
 import com.demonwav.mcdev.platform.fabric.creator.FabricProjectConfig
 import com.demonwav.mcdev.platform.forge.creator.ForgeProjectConfig
 import com.demonwav.mcdev.platform.liteloader.creator.LiteLoaderProjectConfig
@@ -40,6 +41,7 @@ class PlatformChooserWizardStep(private val creator: MinecraftProjectCreator) : 
     private lateinit var spongePluginButton: JBRadioButton
     private lateinit var forgeModButton: JBRadioButton
     private lateinit var fabricModButton: JBRadioButton
+    private lateinit var cloudModButton: JBRadioButton
     private lateinit var architecturyModButton: JBRadioButton
     private lateinit var bungeeCordPluginButton: JBRadioButton
     private lateinit var waterfallPluginButton: JBRadioButton
@@ -79,6 +81,7 @@ class PlatformChooserWizardStep(private val creator: MinecraftProjectCreator) : 
             spongePluginButton.isSelected -> SpongeProjectConfig()
             forgeModButton.isSelected -> ForgeProjectConfig()
             fabricModButton.isSelected -> FabricProjectConfig()
+            cloudModButton.isSelected -> CloudProjectConfig()
             architecturyModButton.isSelected -> ArchitecturyProjectConfig()
             liteLoaderModButton.isSelected -> LiteLoaderProjectConfig()
             bungeeCordPluginButton.isSelected -> BungeeCordProjectConfig(PlatformType.BUNGEECORD)

@@ -28,6 +28,8 @@ class FabricPresentationProvider : LibraryPresentationProvider<LibraryVersionPro
                     val jar = JarFile(classesRoot.localFile)
                     val isFabricLib = jar.entries().asSequence().any {
                         it.name == "net/fabricmc/loader/api/FabricLoader.class"
+                    } && !jar.entries().asSequence().any {
+                        it.name == "ml/cloudmc/cloudloader/loading/LoadingConstants.class"
                     }
                     if (isFabricLib) {
                         return LibraryVersionProperties()

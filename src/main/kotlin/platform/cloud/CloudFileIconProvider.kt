@@ -8,7 +8,7 @@
  * MIT License
  */
 
-package com.demonwav.mcdev.platform.forge
+package com.demonwav.mcdev.platform.cloud
 
 import com.demonwav.mcdev.MinecraftSettings
 import com.demonwav.mcdev.facet.MinecraftFacet
@@ -19,7 +19,7 @@ import com.intellij.openapi.util.Iconable
 import com.intellij.openapi.vfs.VirtualFile
 import javax.swing.Icon
 
-class ForgeFileIconProvider : FileIconProvider {
+class CloudFileIconProvider : FileIconProvider {
 
     override fun getIcon(file: VirtualFile, @Iconable.IconFlags flags: Int, project: Project?): Icon? {
         project ?: return null
@@ -29,13 +29,10 @@ class ForgeFileIconProvider : FileIconProvider {
         }
 
         val module = ModuleUtilCore.findModuleForFile(file, project) ?: return null
-        val forgeModule = MinecraftFacet.getInstance(
-            module,
-            ForgeModuleType
-        ) ?: return null
+        val cloudModule = MinecraftFacet.getInstance(module, CloudModuleType) ?: return null
 
-        if (file == forgeModule.mcmod) {
-            return forgeModule.icon
+        if (file == cloudModule.mcmod) {
+            return cloudModule.icon
         }
         return null
     }

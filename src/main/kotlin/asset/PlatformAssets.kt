@@ -31,6 +31,9 @@ object PlatformAssets : Assets() {
     val FABRIC_ICON = loadIcon("/assets/icons/platform/Fabric.png")
     val FABRIC_ICON_2X = loadIcon("/assets/icons/platform/Fabric@2x.png")
 
+    val CLOUD_ICON = loadIcon("/assets/icons/platform/Cloud.png")
+    val CLOUD_ICON_2X = loadIcon("/assets/icons/platform/Cloud@2x.png")
+
     val ARCHITECTURY_ICON = loadIcon("/assets/icons/platform/Architectury.png")
     val ARCHITECTURY_ICON_2X = loadIcon("/assets/icons/platform/Architectury@2x.png")
 
